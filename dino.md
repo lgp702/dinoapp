@@ -4,6 +4,10 @@ Dino web application - Node.js + Express + AWS Cloud
 This sample code helps get you started with a simple Express web application
 deployed by AWS Elastic Beanstalk and AWS CloudFormation.
 
+Dino website: http://ec2-54-249-79-112.ap-northeast-1.compute.amazonaws.com/
+Dino App: http://dinoappapp.w2tne5xck3.ap-northeast-1.elasticbeanstalk.com/form03?username=henry
+Dino DB: dinodb.ckwioo7p7nvb.ap-northeast-1.rds.amazonaws.com
+
 Features
 -----------
 
