@@ -1,4 +1,6 @@
-Dino web application - Node.js + Express + AWS Cloud
+Dino web application
+
+(Node.js + Express + Mysql + AWS Cloud)
 ==================================================
 
 This sample code helps get you started with a simple Express web application
