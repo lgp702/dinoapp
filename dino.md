@@ -31,10 +31,11 @@ Backend API:
 * API data encryption - by RSA
 * Host by AWS Elastic Beanstalk (AWS application management system)
 * Mysql - Amazon Relational Database Service (RDS)
+* VPC + Security Group
 
 DevOps - Development & Deployment:
 
-* Github
+* Github (or AWS CodeCommit,Highly available Git source control from AWS. Includes encryption, IAM integration, and more.)
 * AWS CodeStar (auto trigger build/deployment, multiple env setup)
 
 What is AWS Elastic Beanstalk?:
