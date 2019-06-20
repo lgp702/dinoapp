@@ -59,10 +59,13 @@ Elastic Beanstalk 支持在 Go、Java、.NET、Node.js、PHP、Python 和 Ruby �
 ![Pull Reminders image](public/img/1.jpg)
 
 信息收集：
+
 ![Pull Reminders image](public/img/2.jpg)
 
 信息展示：
+
 ![Pull Reminders image](public/img/3.jpg)
 
 注册功能：
+
 ![Pull Reminders image](public/img/4.jpg)
