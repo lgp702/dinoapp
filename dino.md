@@ -52,7 +52,17 @@ What is AWS Elastic Beanstalk?:
 
 Elastic Beanstalk 支持在 Go、Java、.NET、Node.js、PHP、Python 和 Ruby 中开发的应用程序。当您部署应用程序时，Elastic Beanstalk 构建选定的受支持的平台版本并预置一个或多个 AWS 资源（如 Amazon EC2 实例）来运行您的应用程序。
 
-# Dino App (build with Ionic framework)
+# Dino App (Andirod/iOS)
+
+Features
+-----------
+
+The Dino App functions:
+
+* build with Ionic framework (Angular)
+* support Andriod & iOS platform & web site
+* business feature: login/registry/submit/acknowledge display
+
 
 登录功能：
 
