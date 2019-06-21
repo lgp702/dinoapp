@@ -3,12 +3,13 @@ var express = require('express'),
   fs = require('fs'),
   DinoDb = require("../assets/js/dinodb"),
   DinoException = require("../assets/js//dinoExceptions");
+const {log} = require("../assets/js/log");
 // new router
 var router = express.Router();
-// logger
-var log = function (entry) {
-  fs.appendFileSync('/tmp/dino.log', new Date().toISOString() + ' - ' + entry + '\n');
-};
+// // logger
+// var log = function (entry) {
+//   fs.appendFileSync('/tmp/dino.log', new Date().toISOString() + ' - ' + entry + '\n');
+// };
 // init
 var app = new express();
 app.use(bodyParser.urlencoded({
@@ -34,7 +35,10 @@ router.post('/submit', function (req, res, next) {
   };
   Submit(response, function (err, result) {
     if (err) {
-      res.end(JSON.stringify({
+      log("Error: Failed to submit data." + err.message || err.stack);
+      res
+      .status(400)
+      .end(JSON.stringify({
         'code': '-1',
         'data': null,
         'error': err,
@@ -69,7 +73,7 @@ function Submit(entity, callback) {
     } else {
       console.log("result.length:" + result.length);
       if (result.length <= 0) {
-        callback(new DinoException("user '" + entity.username + "' not existed."), null);
+        callback(new DinoException({message:"user '" + entity.username + "' not existed."}), null);
       } else {
         // console.log("uid:" + JSON.stringify(result));
         uid = result[0].uid;

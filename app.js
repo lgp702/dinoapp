@@ -1,18 +1,21 @@
 var port = process.env.PORT || 3000,
     // http = require('http'),
-    mysql = require('mysql'),
+    // mysql = require('mysql'),
     express = require("express"),
     fs = require('fs'),
-    bodyParser = require('body-parser'),
-    DinoDb = require("./assets/js/dinodb"),
-    html = fs.readFileSync('index.html');
+    bodyParser = require('body-parser');
+    // JwtAuth = require('./routes/jwtAuth');
+    // DinoDb = require("./assets/js/dinodb"),
+    // html = fs.readFileSync('index.html');
+
+
 // logger
 var log = function(entry) {
     fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
 };
 // init
 var app = new express();
-// app.set('view engine', 'html');
+
 
 // enable cross-site access
 app.all('*', function (req, res, next) {
@@ -23,17 +26,33 @@ app.all('*', function (req, res, next) {
 });
 
 app.use(bodyParser.urlencoded({
-    extended: false,
+    extended: true,
  }));
 app.use(bodyParser.json());
+
+// authorization with JWT
+// var jwtauth = new JwtAuth();
+// var bypassUrls = [
+//     "form01/login",
+//     "form01/register",
+//     "/fileupload",
+//     "/fileupload/single",
+//     "/fileupload/multiple"
+// ]
+// app.use(function (req, res, next) {
+//     jwtauth.verifyJWT(req,res,bypassUrls,next);
+// });
+
 // init db
-var dinodb = new DinoDb();
+// var dinodb = new DinoDb();
 
 // import routers
 var form01Router = require('./routes/form01');
 var form02Router = require('./routes/form02');
 var form03Router = require('./routes/form03');
 var initdbRouter = require('./routes/initdinodb');
+var genkeysRouter = require('./routes/genkeys');
+var fileuploadRouter = require('./routes/fileupload');
 
 // var server = http.createServer(function (req, res) {
 //     if (req.method === 'POST') {
@@ -83,10 +102,13 @@ app.use('/form01', form01Router);
 app.use('/form02', form02Router);
 app.use('/form03', form03Router);
 app.use('/', initdbRouter);
+app.use('/', genkeysRouter);
+app.use('/fileupload', fileuploadRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    next(createError(404));
+    // next(createError(404));
+    next();
 });
 
 // error handler
@@ -101,7 +123,7 @@ app.use(function (err, req, res, next) {
     res.send(JSON.stringify({
         'code': '-99999',
         'data': null,
-        'error': err,
+        'error': err.stack,
         'message': 'failed',
     }));
 });

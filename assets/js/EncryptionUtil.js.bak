@@ -1,0 +1,204 @@
+'use strict';
+const CryptoJS = require('crypto-js'),
+  NodeRSA = require('node-rsa'),
+  fs = require('fs'),
+  DinoException = require("./dinoExceptions");
+
+function EncryptionUtil() {
+  // MD5 encryption
+  this.MD5Encrypt = (key) => {
+    let paramMD5 = CryptoJS.MD5(key);
+    // Base74
+    let words = CryptoJS.enc.Utf8.parse(paramMD5);
+    let paramBase64 = CryptoJS.enc.Base64.stringify(words);
+    return paramBase64;
+  }
+
+  // bits — {int} — key size in bits. 2048 by default.
+  // exp — {int} — public exponent. 65537 by default.
+  this.GenerateKeyPair = (callback) => {
+    var rsaKey = new NodeRSA({
+      b: 512
+    })
+    rsaKey.setOptions({
+      encryptionScheme: 'pkcs1'
+    })
+    try {
+      // generate key pair
+      // rsaKey.generateKeyPair(bits, exp);
+      // export public key
+      var pubKey = rsaKey.exportKey('pkcs1-public-pem');
+      var priKey = rsaKey.exportKey('pkcs1-private-pem');
+      // save public key
+      fs.writeFile('./assets/keys/rsa.pub.pem', pubKey,{
+        encoding: 'utf8'
+        }, function(err){
+          if(err) {
+            callback(err);
+          } else {
+            // save private key
+            fs.writeFile('./assets/keys/rsa.pem', priKey, {
+              encoding: 'utf8'
+            }, function (err) {
+              if (err) {
+                callback(err);
+              } else {
+                callback(null);
+              }
+            });
+          }
+      });
+  }
+  catch(err) {
+    console.log(err);
+    throw new DinoException({message: "failed to generate the ley pairs", error: err});
+   }
+  }
+
+  this.ReadPrivateKey = (callback) => {
+    fs.readFile('./assets/keys/rsa.pem', (err, data) => {
+      if(err) {
+        callback(err, null);
+      } else {
+        callback(null, data);
+      }
+    });
+  }
+  this.ReadPublicKey = (callback) => {
+    fs.readFile('./assets/keys/rsa.pub.pem', (err, data) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, data);
+      }
+    });
+  }
+
+  // encrypt with private key
+  // buffer
+  // key — private key -- format: pkcs1
+  this.RSAEncryptByPrivateKey = (buffer, key, callback) => {
+    try {
+      if (key) {
+        var rsaKey = new NodeRSA(key);
+        // rsaKey.importKey(priKey, 'private');
+        callback(null, rsaKey.encryptPrivate(buffer, 'base64', 'utf8'));
+      } else {
+        this.ReadPrivateKey(function (err, data) {
+          if (err) {
+            throw new DinoException({
+              message: 'failed to encrypt the buffer.',
+              error: error
+            });
+          } else {
+            var rsaKey = new NodeRSA(data);
+            // rsaKey.importKey(data, 'private');
+            callback(null, rsaKey.encryptPrivate(buffer, 'base64', 'utf8'));
+          }
+        });
+      }
+    } catch (error) {
+      throw new DinoException({
+        message: 'failed to encrypt the buffer.',
+        error: error
+      });
+    }
+  }
+
+// encrypt with public
+// buffer.
+// key — public key -- format: pkcs8-public
+this.RSAEncryptByPublicKey = (buffer, key, callback) => {
+  try {
+    if (key) {
+      var rsaKey = new NodeRSA(key);
+      // rsaKey.importKey(pubKey, 'public');
+      callback(null, rsaKey.encrypt.encrypt(buffer, 'base64', 'utf8'));
+    } else {
+      this.ReadPublicKey(function (err, data) {
+        if (err) {
+          throw new DinoException({
+            message: 'failed to encrypt the buffer.',
+            error: error
+          });
+        } else {
+          var rsaKey = new NodeRSA(data);
+          // rsaKey.importKey(data, 'public');
+          callback(null, rsaKey.encrypt(buffer, 'base64', 'utf8'));
+        }
+      });
+    }
+  } catch (error) {
+    throw new DinoException({
+      message: 'failed to encrypt the buffer.',
+      error: error
+    });
+  }
+}
+
+  // decrypt with private key
+  // buffer
+  // key — private key -- format: pkcs1
+  this.RSADecryptByPrivateKey = (buffer, key, callback) => {
+    try {
+      if (key) {
+        var rsaKey = new NodeRSA(key);
+        // rsaKey.importKey(priKey, 'private');
+        callback(null,rsaKey.decrypt(buffer, 'utf8'));
+      } else {
+        //read private key
+        this.ReadPrivateKey(function (err, data){
+          if(err) {
+            throw new DinoException({
+              message: 'failed to decrypt the buffer.',
+              error: error
+            });
+          } else {
+            var rsaKey = new NodeRSA(data);
+            // rsaKey.importKey(data, 'private');
+            callback(null, rsaKey.decrypt(buffer, 'utf8'));
+          }
+        });
+      }
+    } catch (error) {
+      throw new DinoException({
+        message: 'failed to decrypt the buffer.',
+        error: error
+      });
+    }
+  }
+
+  // decrypt with public
+  // buffer.
+  // key — public key -- format: pkcs8-public
+  this.RSADecryptByPublicKey = (buffer, key, callback) => {
+    try {
+      // const pubKey = key;
+      if(key) {
+        var rsaKey = new NodeRSA(key);
+        // rsaKey.importKey(pubKey, 'public');
+        callback(null, rsaKey.decryptPublic(buffer, 'utf8'));
+      } else {
+        this.ReadPublicKey(function(err,data){
+          if(err) {
+            throw new DinoException({
+              message: 'failed to decrypt the buffer.',
+              error: error
+            });
+          } else {
+            var rsaKey = new NodeRSA(data);
+            // rsaKey.importKey(data, 'public');
+            callback(null, rsaKey.decryptPublic(buffer, 'utf8'));
+          }
+        });
+      }
+    } catch (error) {
+      throw (new DinoException({
+        message: 'failed to decrypt the buffer.',
+        error: error
+      }));
+    }
+  }
+}
+
+module.exports = EncryptionUtil;

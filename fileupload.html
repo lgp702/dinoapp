@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Test File Upload</title>
+</head>
+
+<body>
+
+  <p>For test only pdf file be allowed to be uploaded</p>
+
+  <!--  SINGLE FILE -->
+  <form action="/fileupload/single" enctype="multipart/form-data" method="POST">
+    Select a pdf file: <input type="file" accept="application/pdf" name="ctlFileUpload" />
+    <input type="submit" value="Upload a file" />
+  </form>
+
+
+  <!-- MULTIPLE FILES -->
+
+  <form action="/fileupload/multiple" enctype="multipart/form-data" method="POST">
+    Select pdf files: <input type="file" name="ctlMultiFilesUpload" accept="application/pdf" multiple>
+    <input type="submit" value="Upload your files" />
+  </form>
+
+</body>
+
+</html>

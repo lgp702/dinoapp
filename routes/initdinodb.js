@@ -1,12 +1,13 @@
 var express = require('express'),
   bodyParser = require('body-parser'),
   DinoDb = require("../assets/js/initdinodb");
+const {log} = require("../assets/js/log");
 // new router
 var router = express.Router();
 // logger
-var log = function (entry) {
-  fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
-};
+// var log = function (entry) {
+//   fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
+// };
 // init
 var app = new express();
 app.use(bodyParser.urlencoded({
@@ -24,8 +25,10 @@ router.post('/initdinodb', function (req, res, next) {
   console.log('command:' + response.command);
   InitDinoDb(response.command, function (err, result) {
     if (err) {
-      console.log('aaaaa' + JSON.stringify(err));
-      res.end(JSON.stringify({
+      log("Error: Failed to initialize the database." + err.message || err.stack);
+      res
+      .status(400)
+      .end(JSON.stringify({
         'code': '-1',
         'data': null,
         'err': err,
