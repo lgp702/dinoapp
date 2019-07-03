@@ -17,6 +17,12 @@ What's New:
    (1) upload single file;
    (2) upload multiple files(max file number: 10);
 
+##v0.4
+What's New:
+1. modified the interface "/form02/submit", it will add a new record with each post(with previous version, each user can just add one record in the mainform, all other posts with same username will update existed record).
+2. add a new interface -- /form03/search
+
+
 # API Specifications
 This is the first version of the "Dino" Service API. This document
 is meant to describe the functioning of the service calls in details.
@@ -361,6 +367,70 @@ If one of the files is not a .pdf file, the HTTP response is a `403 Forbidden`, 
   "desc": "Only .pdf files are allowed!",
   "error":null,
   "message":"failed"
+}
+```
+If the operation failed, the HTTP response is a `500 Internal Error` or `400 Bad Request`. The response body is an error object containing additional information on the error occurred.
+
+```json 
+{
+  "code":"-99999",
+  "data":null,
+  "error":{},
+  "message":"failed"
+}
+```
+---
+## Search
+### Path
+    /form03/search
+### HTTP Method
+    POST
+### Description
+form03 search records with criteria
+
+### Request
+```header
+authorization: Bearer ${token}
+```
+```json
+{
+  "criteria": {
+      "username": "Yi", // mandatory
+      "name": "Yi", // optional
+      "date1": "2019-6-30 12:01:01", // optional
+      "date2": "2019-12-31 11:59:59", // optional
+      "delivery": 1, // optional
+      "type": "type1" // optional
+  }
+}
+```
+
+### Response
+If the operation was successful, the HTTP response is a `200 OK`.
+The response body is a JSON representation with the records array
+```header
+authorization: Bearer ${token}
+```
+```json
+{
+  "code":"000000", // '000000':login success;  '-1': login failed
+  "data": // if login success, return the user info here; if failed, the data is null
+  [
+    {
+	  "mid":1,
+	  "uid":1,
+	  "name":"Yi",
+	  "date1":"2019-05-28T00:00:00.000Z",
+	  "date2":"2019-06-13T16:52:36.000Z",
+	  "delivery":{"type":"Buffer","data":[1]},
+	  "eventType":"[\"线上活动\",\"线下活动\"]",
+	  "resource":"2",
+	  "description":"d",
+	  "dateCreated":"2019-06-12T07:33:57.000Z"
+	}
+  ],
+  "error":null, // if login success, the error is null; if login failed, return error detail here
+  "message":"success" // 'success':login success;  'failed': login failed
 }
 ```
 If the operation failed, the HTTP response is a `500 Internal Error` or `400 Bad Request`. The response body is an error object containing additional information on the error occurred.
